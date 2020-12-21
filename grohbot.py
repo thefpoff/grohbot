@@ -206,7 +206,7 @@ def get_temp():
 def set_device_state_relays(devices):
 
     global last_button_press_time
-    
+
     # fake button press to keep buttons from firing unwanted
     last_button_press_time = time.time()
  
@@ -469,6 +469,8 @@ dhtDevice = adafruit_dht.DHT22(dht22_pin)
 
 save_config_to_file(grohbotconfig)
 save_device_states_to_file(devices)
+save_temps_to_file(70, 30)
+
 timer = RepeatedTimer(check_mode_seconds, tick_tock)
 
 print_lcd_line_0("GROHBOT ACTIVE") 
