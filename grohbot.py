@@ -257,7 +257,7 @@ def print_device_states(devices):
         print(devices[i].name + " : " + str(devices[i].state))
 
     # Path
-    path = 'devices_states.pkl'
+    path = 'pickles/devices_states.pkl'
 
     # Get the time of last modifation of the specified path since the epoch
     modification_time = os.path.getmtime(path)
@@ -294,7 +294,7 @@ def save_temps_to_file(ftemp, humidity):
     temps.humidity = humidity
 
     # file for saving/pickle 
-    file = open('temphum.pkl', 'wb')
+    file = open('pickles/temphum.pkl', 'wb')
     pickle.dump(temps, file)
     file.close()
 
