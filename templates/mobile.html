@@ -1,0 +1,39 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+	<head>
+	<link rel="stylesheet" href='{{ url_for('static',    filename='style_mobile.css') }}' />
+	</head>
+
+	<body>
+
+		<div class="main_content">
+
+			<h1>GROHBOT LIVE </h1>
+			<h3>{{ temps.ftemp }}&deg;F {{ temps.humidity }}% h</h3>
+
+
+			<div class="hist_table">
+
+				<div class="histtablehead">Recent Measurements</div>
+				<table id = "histtbl">
+
+					{% for row in past_data %}
+					<tr>
+						<td>{{ row.ftemp }}&deg; F</td>
+				   		<td>{{ row.humidity }}% h</td>
+				   		<td>{{ row.time_taken }}</td>
+					</tr>
+				    
+					{% else %}
+				    <td><em>no rows found</em></td>
+					{% endfor %}
+
+				</table>
+			</div>
+
+			<br clear="all">
+			
+			<div class="nav"><a href="/">HOME</a></div>
+		</div>
+	</body>
+</html>
