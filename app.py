@@ -45,7 +45,7 @@ def page_stuff():
     devices = pickle.load(fileo)
     fileo.close()
 
-    os.system('tail -13 dht.csv > lastdht.csv')
+    os.system('tail -13 csv/dht.csv > csv/lastdht.csv')
 
     past_data = []
 

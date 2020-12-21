@@ -274,16 +274,16 @@ def save_data_to_csv(ftemp, humidity, devices):
 
 def save_row_to_csv(data_row):
 
-    if path.exists("dht.csv"):
+    if path.exists("csv/dht.csv"):
         # file exists, write row
-        with open('dht.csv', 'a') as csv_file:
+        with open('csv/dht.csv', 'a') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=',', lineterminator='\n')
             csv_writer.writerow(data_row)
 
     else:
         # file doesn't exist, create and write header
         data_row = ["Temp", "Humidity", "Lower Light State", "Middle Light State", "Exhaust Fan State", "Breeze Fan State", "Heater State", "Datetime"]
-        with open('dht.csv', 'a') as csv_file:
+        with open('csv/dht.csv', 'a') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=',', lineterminator='\n')
             csv_writer.writerow(data_row)
 
