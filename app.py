@@ -13,21 +13,21 @@ app = Flask(__name__)
 def save_device_states_to_file(devices):
 
     # file for saving/pickle 
-    file = open('devices_states.pkl', 'wb')
+    file = open('pickles/devices_states.pkl', 'wb')
     pickle.dump(devices, file)
     file.close()
 
 def save_config_to_file(grohbotconfig):
 
     # file for saving/pickle 
-    file = open('grohbotconfig.pkl', 'wb')
+    file = open('pickles/grohbotconfig.pkl', 'wb')
     pickle.dump(grohbotconfig, file)
     file.close()
 
 def get_config_from_file():
 
     # open the file where data is dumped
-    fileo = open('grohbotconfig.pkl', 'rb')
+    fileo = open('pickles/grohbotconfig.pkl', 'rb')
     datao = pickle.load(fileo)
     fileo.close()
 
@@ -36,12 +36,12 @@ def get_config_from_file():
 def page_stuff():
 
 	# open the file where data is dumped
-    fileo = open('temphum.pkl', 'rb')
+    fileo = open('pickles/temphum.pkl', 'rb')
     temps = pickle.load(fileo)
     fileo.close()
 
  	# open the file where data is dumped
-    fileo = open('devices_states.pkl', 'rb')
+    fileo = open('pickles/devices_states.pkl', 'rb')
     devices = pickle.load(fileo)
     fileo.close()
 

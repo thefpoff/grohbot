@@ -219,14 +219,14 @@ def set_device_state_relays(devices):
 def save_config_to_file(grohbotconfig):
 
     # file for saving/pickle 
-    file = open('grohbotconfig.pkl', 'wb')
+    file = open('pickles/grohbotconfig.pkl', 'wb')
     pickle.dump(grohbotconfig, file)
     file.close()
 
 def get_config_from_file():
 
     # open the file where data is dumped
-    fileo = open('grohbotconfig.pkl', 'rb')
+    fileo = open('pickles/grohbotconfig.pkl', 'rb')
     datao = pickle.load(fileo)
     fileo.close()
 
@@ -235,7 +235,7 @@ def get_config_from_file():
 def save_device_states_to_file(devices):
 
     # file for saving/pickle 
-    file = open('devices_states.pkl', 'wb')
+    file = open('pickles/devices_states.pkl', 'wb')
     pickle.dump(devices, file)
     file.close()
 
@@ -301,7 +301,7 @@ def save_temps_to_file(ftemp, humidity):
 def get_temps_from_file():
 
     # open the file where data is dumped
-    fileo = open('temphum.pkl', 'rb')
+    fileo = open('pickles/temphum.pkl', 'rb')
     temps = pickle.load(fileo)
     fileo.close()
 
