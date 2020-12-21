@@ -2,3 +2,8 @@ div.row {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+div.col-2 {
+    font-size: 22px;
+    text-align: right;
+}
