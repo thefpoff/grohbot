@@ -323,12 +323,12 @@ def set_states_by_logic(ftemp, humidity, devices):
     
     if localtime.tm_hour >= config.hour_lights_on or localtime.tm_hour < config.hour_lights_off:
 
-        print_lcd_line_1("LT: " + str(ftemp) + "f " + str(humidity))
+        print_lcd_line_1("LT: " + str(ftemp) + "f " + str(humidity) + "H")
         devices["lower_light"].state = 1
         devices["middle_light"].state = 1
 
     else: 
-        print_lcd_line_1("NT: " + str(ftemp) + "f " + str(humidity))
+        print_lcd_line_1("NT: " + str(ftemp) + "f " + str(humidity) + "H")
         devices["lower_light"].state = 0
         devices["middle_light"].state = 0
     
@@ -419,7 +419,7 @@ def tick_tock():
 
                 print_lcd_line_0(time.strftime("%m/%d, %H:%M:%S", time.localtime()))
                 ftemp, humidity = get_temps_from_file()
-                print_lcd_line_1("NOW:" + str(ftemp) + "f " + str(humidity))
+                print_lcd_line_1("NOW:" + str(ftemp) + "F " + str(humidity) + "H")
                 print("SETTING STATES FROM FILE")
                 #print_device_states(devices)
 
