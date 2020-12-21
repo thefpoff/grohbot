@@ -1,0 +1,49 @@
+div.hist_table {
+    width: 800px;
+    font-family: Roboto;
+    margin: auto;
+}
+
+div.main_content h3 {
+    font-family: Lato;
+    width: 200px;
+    margin: auto;
+}
+
+html body {
+    width: 900px;
+    margin: auto;
+}
+
+div.nav {
+    width: 300px;
+    margin: auto;
+    text-align: center;
+}
+
+#histtbl {
+    font-size: 40px;
+    width: 800px;
+}
+
+div.main_content h1 {
+    font-family: Roboto;
+    width: 300px;
+    margin: auto;
+}
+
+div.nav {
+    width: 600px;
+    margin: auto;
+    text-align: center;
+    font-family: Roboto;
+    font-weight: bold;
+    border-style: none;
+    padding-top: 20px;
+}
+
+div.nav a {
+    border-style: solid;
+    padding: 5px;
+    border-color: #000000;
+}
