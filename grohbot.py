@@ -205,6 +205,8 @@ def get_temp():
 
 def set_device_state_relays(devices):
 
+    global last_button_press_time
+    
     # fake button press to keep buttons from firing unwanted
     last_button_press_time = time.time()
  
