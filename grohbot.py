@@ -243,7 +243,7 @@ def save_device_states_to_file(devices):
 def get_device_states_from_file():
 
     # open the file where data is dumped
-    fileo = open('devices_states.pkl', 'rb')
+    fileo = open('pickles/devices_states.pkl', 'rb')
     datao = pickle.load(fileo)
     fileo.close()
 
