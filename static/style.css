@@ -1,9 +1,9 @@
-div.row {
-    margin-top: 10px;
-    margin-bottom: 10px;
+a.devicebtn {
+    margin: 12px;
 }
 
-div.col-2 {
-    font-size: 22px;
+div.devicetext {
+    margin-top: 18px;
     text-align: right;
 }
+

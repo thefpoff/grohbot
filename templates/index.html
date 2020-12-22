@@ -2,7 +2,7 @@
 
 	<head>
 
-		<!-- Required meta tags for Bootstrap CSS-->
+		<!-- Required meta tags for Bootstrap CSS -->
 	    <meta charset="utf-8">
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -10,6 +10,7 @@
 
 		<link rel="stylesheet" href='{{ url_for('static',    filename='style.css') }}' />
 
+		<title>GROHBOT LIVE</title>
 	</head>
 
 	<body>
@@ -17,27 +18,48 @@
 		<div class="container">
 
 			<div class = "row" >
-				<div class="col"><a href="/imgrefresh"><img src="static/grohbot.jpg?{{ imgstamp }}"/></a></div>
+				<div class="col-6"><a href="/?action=refresh"><img src="static/grohbot.jpg?{{ imgstamp }}"/></a></div>
 			</div>
 
 
 			{% for name, device in devices.items() %}
 			<div class="row">
-				<div class="col-2">{{ device.name }}</div>
+				<div class="devicetext col-2">{{ device.name }}</div>
 
-				<div class="col-2">
+				<div class="btncol col-2">
 	
 					{% if device.state == 0 %}
-						<a class="btn btn-warning" href="/{{ device.page }}off">OFF</a> - <a class="btn btn-dark" href="/{{ device.page }}on">ON</a>
+						<a class="devicebtn btn btn-warning" href="/?action={{ device.page }}off">OFF</a> <a class="btn btn-dark" href="/?action={{ device.page }}on">ON</a>
 					{% else %}
-						<a class="btn btn-dark" href="/{{ device.page }}off">OFF</a> - <a class="btn btn-warning" href="/{{ device.page }}on">ON</a>
+						<a class="devicebtn btn btn-dark" href="/?action={{ device.page }}off">OFF</a> <a class="btn btn-warning" href="/?action={{ device.page }}on">ON</a>
 					{% endif %}
 
 				</div>
 			</div>
 			{% endfor %}
 
-			<div class="row">		
+			<div class="row">
+				LIGHTS ON HOUR: {{ configdata.hour_lights_on }}
+			</div>
+
+			<div class="row">
+				LIGHTS OFF HOUR: {{ configdata.hour_lights_off }}
+			</div>
+
+			<div class="row">
+				LOW TEMP TRIGGER: {{ configdata.low_temp_trigger }}
+			</div>
+
+			<div class="row">
+				HIGH TEMP TRIGGER: {{ configdata.high_temp_trigger }}
+			</div>
+
+			<div class="row">
+				HIGH HUMIDITY TRIGGER: {{ configdata.high_humid_trigger }}
+			</div>
+
+
+			<div class="row">	
 
 				<div class="col">
 
@@ -61,8 +83,8 @@
 			</div>
 
 			<div class="row">
-				<h2 class="col">Recent Comments:</h2>
-				<h4 class="col">{{ messagetext }}</h4>
+				<div class="col-1">Recent Comments:</div>
+				<div class="col-4">{{ messagetext }}</div>
 			</div>
 			
 		</div>

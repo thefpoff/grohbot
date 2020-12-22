@@ -30,15 +30,17 @@ middle_light_pin = 13
 internal_fan_pin = 5
 heater_pin = 19
 
+dht22_pin = 10
+
+button_one_pin = 3
+button_two_pin = 2
+
 # not working yet pins
 bottom_fan_pin = 21
 top_light_pin = 0
 ceiling_light_pin = 26
 
-dht22_pin = 10
 
-button_one_pin = 3
-button_two_pin = 2
 
 #    END PINS   
 ###########################
