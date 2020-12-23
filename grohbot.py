@@ -392,7 +392,7 @@ def tick_tock():
         #set last_run_minute so we don't run again this minute
         last_run_minute = datetime.datetime.now().minute
 
-        if time_to_run_minutes(1): # Do this every 1 minutes
+        if time_to_run_minutes(1): # Do this every n minutes
 
             ftemp, humidity = get_temps_from_file()
             devices = set_states_by_logic(ftemp, humidity, devices)
@@ -401,7 +401,7 @@ def tick_tock():
             print("RAN LOGIC")
 
 
-        if time_to_run_minutes(10): # Do this every 10 minutes
+        if time_to_run_minutes(10):
         
             ftemp, humidity = get_temps_from_file()
             save_data_to_csv(ftemp, humidity, devices)
@@ -413,7 +413,7 @@ def tick_tock():
         # set so we don' run again this second 
         last_run_second = datetime.datetime.now().second
 
-        if time_to_run_seconds(5): # Do this every five seconds
+        if time_to_run_seconds(5): # Do this every n seconds
 
                 devices = get_device_states_from_file()
                 set_device_state_relays(devices)
