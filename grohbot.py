@@ -96,13 +96,13 @@ def print_lcd_line_0(text):
     wiringpi.serialPuts(serial,'?f') #clear screen line one
     wiringpi.serialPuts(serial, text)
 
-    print("lcd0:" + text)
+    #print("lcd0:" + text)
 
 def print_lcd_line_1(text):
     wiringpi.serialPuts(serial,'?x00?y1') #set cursor to second line
     wiringpi.serialPuts(serial, text)
 
-    print("lcd1:" + text)
+    #print("lcd1:" + text)
 
 
 def change_device_state(device):
@@ -265,7 +265,7 @@ def print_device_states(devices):
     modification_time = os.path.getmtime(path)
     # convert the time in seconds since epoch to local time
     local_time = time.ctime(modification_time)
-    print("Last modification time(Local time):", local_time)
+    print( local_time )
 
 def save_data_to_csv(ftemp, humidity, devices):
 
@@ -392,7 +392,7 @@ def tick_tock():
         #set last_run_minute so we don't run again this minute
         last_run_minute = datetime.datetime.now().minute
 
-        if time_to_run_minutes(5): # Do this every 5 minutes
+        if time_to_run_minutes(1): # Do this every 1 minutes
 
             ftemp, humidity = get_temps_from_file()
             devices = set_states_by_logic(ftemp, humidity, devices)
@@ -422,18 +422,16 @@ def tick_tock():
                 print_lcd_line_0(time.strftime("%m/%d, %H:%M:%S", time.localtime()))
                 ftemp, humidity = get_temps_from_file()
                 print_lcd_line_1("NOW:" + str(ftemp) + "F " + str(humidity) + "H")
-                print("SETTING STATES FROM FILE")
-                #print_device_states(devices)
+                print("SET STATE FROM PKL")
 
         if time_to_run_seconds(30): 
 
-                ftemp, humidity = get_temps_from_file()
-                take_pic(ftemp, humidity)
-                print("TOOK PICTURE")
-
                 ftemp, humidity = get_temp()
                 save_temps_to_file(ftemp, humidity)
-                print("HT MEASUREMENT")
+                print("HT MEASUREMENT: " + str(ftemp) + "F " + str(humidity) + "%H")
+
+                take_pic(ftemp, humidity)
+                print("TOOK PICTURE")
 
     
 

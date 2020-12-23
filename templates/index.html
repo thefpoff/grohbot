@@ -97,7 +97,7 @@
 						<div class="btncol col-sm-2 col-sm-6">
 
 							{% if device.state == 0 %}
-								<a class="devicebtn btn-sm btn-warning" href="/?action={{ device.page }}off">OFF</a> <a class="devicebtn btn-sm btn-dark" href="/?action={{ device.page }}on">ON</a>
+								<a class="devicebtn btn-sm btn-secondary" href="/?action={{ device.page }}off">OFF</a> <a class="devicebtn btn-sm btn-dark" href="/?action={{ device.page }}on">ON</a>
 							{% else %}
 								<a class="devicebtn btn-sm btn-dark" href="/?action={{ device.page }}off">OFF</a> <a class="devicebtn btn-sm btn-warning" href="/?action={{ device.page }}on">ON</a>
 							{% endif %}
