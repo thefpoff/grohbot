@@ -7,6 +7,8 @@
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+		<!-- JavaScript Bundle with Popper -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
 
 		<link rel="stylesheet" href='{{ url_for('static',    filename='style.css') }}' />
 
@@ -15,76 +17,120 @@
 
 	<body>
 
-		<div class="container">
+		<div class="container-fluid">
 
-			<div class = "row" >
-				<div class="col-6"><a href="/?action=refresh"><img src="static/grohbot.jpg?{{ imgstamp }}"/></a></div>
-			</div>
+			<div class = "row">
 
+				<div class="img col-sm-8">
 
-			{% for name, device in devices.items() %}
-			<div class="row">
-				<div class="devicetext col-2">{{ device.name }}</div>
+					<a href="/?action=refresh"><img src="static/grohbot.jpg?{{ imgstamp }}"/></a>
 
-				<div class="btncol col-2">
-	
-					{% if device.state == 0 %}
-						<a class="devicebtn btn btn-warning" href="/?action={{ device.page }}off">OFF</a> <a class="btn btn-dark" href="/?action={{ device.page }}on">ON</a>
-					{% else %}
-						<a class="devicebtn btn btn-dark" href="/?action={{ device.page }}off">OFF</a> <a class="btn btn-warning" href="/?action={{ device.page }}on">ON</a>
-					{% endif %}
+					<div class="row">
+
+						<div class="col-sm-5">
+
+							<div class="row">
+								<div class="col-sm-2 col-sm-6">
+									LIGHTS ON:
+								</div> 
+								<div class="col-sm-1 col-sm-6">
+									{{ configdata.hour_lights_on }}
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-sm-2 col-sm-6">
+									LIGHTS OFF:
+								</div>
+								<div class="col-sm-1 col-sm-6"> 
+								{{ configdata.hour_lights_off }}
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-sm-2 col-sm-6">
+									LOW TEMP:
+								</div> 
+								<div class="col-sm-1 col-sm-6">
+								{{ configdata.low_temp_trigger }}
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-sm-2 col-sm-6">
+									HIGH TEMP:
+								</div> 
+								<div class="col-sm-1 col-sm-6">
+								{{ configdata.high_temp_trigger }}
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-sm-2 col-sm-6">
+									HIGH HUMID:
+								</div> 
+								<div class="col-sm-1 col-sm-6">
+								{{ configdata.high_humid_trigger }}
+								</div>
+							</div>
+
+						</div>
+
+						<div class="card col-sm-7">
+			
+							{{ messagetext }}
+
+						</div>
+
+					</div>
+				</div>
+
+				<div class="col-sm-4">
+
+					<div class="controls">
+					{% for name, device in devices.items() %}
+					<div class = "row" >
+						<div class="devicetext col-sm-2 col-sm-6">
+							{{ device.name }}
+						</div>
+
+						<div class="btncol col-sm-2 col-sm-6">
+
+							{% if device.state == 0 %}
+								<a class="devicebtn btn-sm btn-warning" href="/?action={{ device.page }}off">OFF</a> <a class="devicebtn btn-sm btn-dark" href="/?action={{ device.page }}on">ON</a>
+							{% else %}
+								<a class="devicebtn btn-sm btn-dark" href="/?action={{ device.page }}off">OFF</a> <a class="devicebtn btn-sm btn-warning" href="/?action={{ device.page }}on">ON</a>
+							{% endif %}
+						</div>
+					</div>
+					{% endfor %}
+					</div>
+
+					<div class="row">
+
+						<div class="col-4 col-sm-12">
+
+							<thead class="histtablehead">Recent Measurements</thead>
+								<table class="table table-striped" id="histtbl">
+
+									{% for row in past_data %}
+									<tr>
+										<td>{{ row.ftemp }}&deg; F</td>
+										<td>{{ row.humidity }}% h</td>
+										<td>{{ row.time_taken }}</td>
+									</tr>
+									
+									{% else %}
+									<td><em>no rows found</em></td>
+									{% endfor %}
+
+								</table>
+							</div>
+
+					</div>
 
 				</div>
-			</div>
-			{% endfor %}
-
-			<div class="row">
-				LIGHTS ON HOUR: {{ configdata.hour_lights_on }}
-			</div>
-
-			<div class="row">
-				LIGHTS OFF HOUR: {{ configdata.hour_lights_off }}
-			</div>
-
-			<div class="row">
-				LOW TEMP TRIGGER: {{ configdata.low_temp_trigger }}
-			</div>
-
-			<div class="row">
-				HIGH TEMP TRIGGER: {{ configdata.high_temp_trigger }}
-			</div>
-
-			<div class="row">
-				HIGH HUMIDITY TRIGGER: {{ configdata.high_humid_trigger }}
-			</div>
-
-
-			<div class="row">	
-
-				<div class="col">
-
-					<div class="histtablehead">Recent Measurements</div>
-					<table id = "histtbl">
-
-						{% for row in past_data %}
-						<tr>
-							<td>{{ row.ftemp }}&deg; F</td>
-					   		<td>{{ row.humidity }}% h</td>
-					   		<td>{{ row.time_taken }}</td>
-						</tr>
-					    
-						{% else %}
-					    <td><em>no rows found</em></td>
-						{% endfor %}
-
-					</table>
-				</div>
-
-			</div>
-
-			<div class="row">
-				<div class="col-1">Recent Comments:</div>
-				<div class="col-4">{{ messagetext }}</div>
+			
 			</div>
 			
 		</div>
