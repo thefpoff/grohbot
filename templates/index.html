@@ -5,13 +5,39 @@
 		<!-- Required meta tags for Bootstrap CSS -->
 	    <meta charset="utf-8">
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
-
+		<!-- Bootstrap CSS -->
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 		<!-- JavaScript Bundle with Popper -->
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+		<!-- d3 for .csv function -->
+		<script src="https://d3js.org/d3.v6.min.js"></script>
 
+		<link rel="shortcut icon" href="static/favicon.ico">
+
+		<!-- Chart js --> 
+		<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha256-t9UJPrESBeG2ojKTIcFLPGF7nHi2vEc7f5A2KpH/UBU=" crossorigin="anonymous"></script>
+		
 		<link rel="stylesheet" href='{{ url_for('static',    filename='style.css') }}' />
+		<style>
+			.chart{
+			vertical-align: middle;
+			width: 100%;
+			margin: 0 auto;
+			position: relative;
+			display: inline-block;
 
+			}
+			p {
+			text-align: center;
+			font-family:'Verdana', sans-serif;
+			font-size: 10px;
+			}
+
+			canvas{
+			height: 100%;
+			}
+		</style>
+		
 		<title>GROHBOT LIVE</title>
 	</head>
 
@@ -21,118 +47,173 @@
 
 			<div class = "row">
 
-				<div class="img col-sm-8">
+				<div class="col-sm-7 imgdiv">
 
-					<a href="/?action=refresh"><img src="static/grohbot.jpg?{{ imgstamp }}"/></a>
+					<a href="/?action=refresh">
+						<img class="camshot" src="static/grohbot.jpg?{{ imgstamp }}"/>
+					</a>
 
-					<div class="row">
+				
+				</div>
 
-						<div class="col-sm-5">
+				<div class="col-sm-5 controlsdiv">
 
-							<div class="row">
-								<div class="col-sm-2 col-sm-6">
-									LIGHTS ON:
-								</div> 
-								<div class="col-sm-1 col-sm-6">
-									{{ configdata.hour_lights_on }}
-								</div>
+						{% for name, device in devices.items() %}
+						<div class = "row devicediv" >
+							<div class="devicetext col-sm-2 col-sm-6">
+								{{ device.name }}
 							</div>
 
-							<div class="row">
-								<div class="col-sm-2 col-sm-6">
-									LIGHTS OFF:
-								</div>
-								<div class="col-sm-1 col-sm-6"> 
-								{{ configdata.hour_lights_off }}
-								</div>
-							</div>
+							<div class="btncol col-sm-2 col-sm-6">
 
-							<div class="row">
-								<div class="col-sm-2 col-sm-6">
-									LOW TEMP:
-								</div> 
-								<div class="col-sm-1 col-sm-6">
-								{{ configdata.low_temp_trigger }}
-								</div>
+								{% if device.state == 0 %}
+									<a class="devicebtn btn-sm btn-secondary" href="/?action={{ device.page }}off">OFF</a> <a class="devicebtn btn-sm btn-dark" href="/?action={{ device.page }}on">ON</a>
+								{% else %}
+									<a class="devicebtn btn-sm btn-dark" href="/?action={{ device.page }}off">OFF</a> <a class="devicebtn btn-sm btn-warning" href="/?action={{ device.page }}on">ON</a>
+								{% endif %}
 							</div>
+						</div>
+						{% endfor %}
 
-							<div class="row">
-								<div class="col-sm-2 col-sm-6">
-									HIGH TEMP:
-								</div> 
-								<div class="col-sm-1 col-sm-6">
-								{{ configdata.high_temp_trigger }}
-								</div>
-							</div>
+						<div class="row">
 
-							<div class="row">
-								<div class="col-sm-2 col-sm-6">
-									HIGH HUMID:
-								</div> 
-								<div class="col-sm-1 col-sm-6">
-								{{ configdata.high_humid_trigger }}
+							<div class="col-sm-5 col-sm-12 configdiv">
+
+								<div class="row">
+									<div class="col-sm-2 col-sm-6">
+										LIGHTS ON:
+									</div> 
+									<div class="col-sm-1 col-sm-6">
+										{{ configdata.hour_lights_on }}
+									</div>
 								</div>
-							</div>
+
+								<div class="row">
+									<div class="col-sm-2 col-sm-6">
+										LIGHTS OFF:
+									</div>
+									<div class="col-sm-1 col-sm-6"> 
+									{{ configdata.hour_lights_off }}
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-sm-2 col-sm-6">
+										LOW TEMP:
+									</div> 
+									<div class="col-sm-1 col-sm-6">
+									{{ configdata.low_temp_trigger }}
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-sm-2 col-sm-6">
+										HIGH TEMP:
+									</div> 
+									<div class="col-sm-1 col-sm-6">
+									{{ configdata.high_temp_trigger }}
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-sm-2 col-sm-6">
+										HIGH HUMID:
+									</div> 
+									<div class="col-sm-1 col-sm-6">
+									{{ configdata.high_humid_trigger }}
+									</div>
+								</div>
 
 						</div>
 
-						<div class="card col-sm-7">
+						
+					</div>
+
+					<div class="card col-sm-7 col-sm-12 messagediv">
 			
 							{{ messagetext }}
 
 						</div>
 
-					</div>
+
 				</div>
+			
+			</div>
 
-				<div class="col-sm-4">
+			<div class="row">
 
-					<div class="controls">
-					{% for name, device in devices.items() %}
-					<div class = "row" >
-						<div class="devicetext col-sm-2 col-sm-6">
-							{{ device.name }}
-						</div>
-
-						<div class="btncol col-sm-2 col-sm-6">
-
-							{% if device.state == 0 %}
-								<a class="devicebtn btn-sm btn-secondary" href="/?action={{ device.page }}off">OFF</a> <a class="devicebtn btn-sm btn-dark" href="/?action={{ device.page }}on">ON</a>
-							{% else %}
-								<a class="devicebtn btn-sm btn-dark" href="/?action={{ device.page }}off">OFF</a> <a class="devicebtn btn-sm btn-warning" href="/?action={{ device.page }}on">ON</a>
-							{% endif %}
-						</div>
+				<div class="col-12">
+					<div class="panel-content text-center  histchart">
+						<canvas id="myLineChart" class="chart" height="264" width="900"></canvas>
 					</div>
-					{% endfor %}
-					</div>
-
-					<div class="row">
-
-						<div class="col-4 col-sm-12">
-
-							<thead class="histtablehead">Recent Measurements</thead>
-								<table class="table table-striped" id="histtbl">
-
-									{% for row in past_data %}
-									<tr>
-										<td>{{ row.ftemp }}&deg; F</td>
-										<td>{{ row.humidity }}% h</td>
-										<td>{{ row.time_taken }}</td>
-									</tr>
-									
-									{% else %}
-									<td><em>no rows found</em></td>
-									{% endfor %}
-
-								</table>
-							</div>
-
-					</div>
-
 				</div>
 			
 			</div>
 			
 		</div>
+
+	<script>
+
+			d3.csv("static/csv/lastdht.csv").then(makeChart);
+			console.log("EAT MORE CHICKEN");
+			
+			function makeChart(dhtdata) {
+				console.log(dhtdata);
+
+				var temps = dhtdata.map(function(d) {
+    				return d.Temp;
+  				});
+  				var humid = dhtdata.map(function(d) {
+    				return d.Humidity;
+  				});
+				var timelables = dhtdata.map(function(d) {
+					return d.Datetime.substring(0,5);
+				});
+				// Data
+				var data = {
+				labels: timelables,
+				datasets: [{
+					label: "Temperature(F)",
+					backgroundColor: "rgba(75,192,192,0.4)",
+					data: temps
+				}, {
+					label: "Humidity",
+					backgroundColor: "rgba(187,80,17,0.4)",
+					data: humid
+				}]
+				};
+
+
+				// Global + Custom Chart Config Options
+
+				var options = {
+				bezierCurve: false,
+				animation: true,
+				animationEasing: "easeOutQuart",
+				showScale: false,
+				tooltipEvents: ["mousemove", "touchstart", "touchmove"],
+				tooltipCornerRadius: 3,
+				pointDot : true,
+				pointDotRadius : 4,
+				datasetFill : true,
+				scaleShowLine : true,
+				animationEasing : "easeOutBounce",
+				animateRotate : true,
+				animateScale : true,
+				responsive: true
+				};
+
+
+				// Load Chart
+
+				var ctx1 = document.getElementById("myLineChart").getContext("2d");
+				var myLineChart = new Chart(ctx1, {
+					type: 'line',
+					data,
+					options
+				});
+			}
+			
+		</script>
 	</body>
 </html>

@@ -45,12 +45,13 @@ def page_stuff():
 	fileo = open('pickles/devices_states.pkl', 'rb')
 	devices = pickle.load(fileo)
 	fileo.close()
-
-	os.system('tail -13 csv/dht.csv > csv/lastdht.csv')
+	
+	os.system('head -n 1 static/csv/dht.csv > static/csv/lastdht.csv')
+	os.system('tail -n 20 static/csv/dht.csv >> static/csv/lastdht.csv')
 
 	past_data = []
 
-	with open('csv/lastdht.csv', newline='') as csv_file:
+	with open('static/csv/lastdht.csv', newline='') as csv_file:
 		reader = csv.reader(csv_file)
 		next(reader, None)  # Skip the header.
 		# Unpack the row directly in the head of the for loop.

@@ -276,16 +276,16 @@ def save_data_to_csv(ftemp, humidity, devices):
 
 def save_row_to_csv(data_row):
 
-    if path.exists("csv/dht.csv"):
+    if path.exists("static/csv/dht.csv"):
         # file exists, write row
-        with open('csv/dht.csv', 'a') as csv_file:
+        with open('static/csv/dht.csv', 'a') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=',', lineterminator='\n')
             csv_writer.writerow(data_row)
 
     else:
         # file doesn't exist, create and write header
         data_row = ["Temp", "Humidity", "Lower Light State", "Middle Light State", "Exhaust Fan State", "Breeze Fan State", "Heater State", "Datetime"]
-        with open('csv/dht.csv', 'a') as csv_file:
+        with open('static/csv/dht.csv', 'a') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=',', lineterminator='\n')
             csv_writer.writerow(data_row)
 
@@ -392,7 +392,7 @@ def tick_tock():
         #set last_run_minute so we don't run again this minute
         last_run_minute = datetime.datetime.now().minute
 
-        if time_to_run_minutes(1): # Do this every n minutes
+        if time_to_run_minutes(5): # Do this every n minutes
 
             ftemp, humidity = get_temps_from_file()
             devices = set_states_by_logic(ftemp, humidity, devices)
