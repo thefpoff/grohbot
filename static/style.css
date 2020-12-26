@@ -7,3 +7,18 @@ img.camshot {
     width: 512px;
     height: 384px;
 }
+.col-sm-5.controlsdiv {
+    margin-top: 24px;
+}
+
+.btncol.col-sm-2.col-sm-6 {
+    margin-top: 5px;
+}
+
+.col-sm-5.col-sm-12.configdiv {
+    margin-top: 20px;
+}
+
+.card.col-sm-7.col-sm-12.messagediv {
+    margin-top: 20px;
+}

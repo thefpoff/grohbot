@@ -53,7 +53,7 @@ def page_stuff():
 
 	with open('static/csv/lastdht.csv', newline='') as csv_file:
 		reader = csv.reader(csv_file)
-		next(reader, None)  # Skip the header.
+		#next(reader, None)  # Skip the header.
 		# Unpack the row directly in the head of the for loop.
 		for ftemp, humidity, lls, mls, efs, bfs, hs, datestamp in reader:
 			temps = TempHumMeasurements()
@@ -129,7 +129,7 @@ def index():
 	if action == "refresh":
 		take_pic(temps.ftemp, temps.humidity)
 
-	messagetext = "Catfish Clem has fallen down on the job. Again."
+	messagetext = "Catfish Clem has fallen down on the job. Again. We are sorry for his transgressions."
 	return render_template('index.html', temps = temps, devices = devices, action = action, past_data = past_data, messagetext = messagetext, imgstamp = imgstamp, configdata = configdata)
 
 

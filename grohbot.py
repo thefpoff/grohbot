@@ -2,14 +2,16 @@
 
 import RPi.GPIO as GPIO # Import Raspberry Pi GPIO library
 import wiringpi 
+import adafruit_dht
+
 import time
 import os
 import os.path
 from os import path
 import datetime
-import adafruit_dht
 import pickle
 import csv
+
 from RepeatedTimer import RepeatedTimer
 from Device import Device
 from TempHumMeasurements import TempHumMeasurements
