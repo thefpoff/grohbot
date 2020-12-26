@@ -46,26 +46,8 @@ def page_stuff():
 	devices = pickle.load(fileo)
 	fileo.close()
 	
-	os.system('head -n 1 static/csv/dht.csv > static/csv/lastdht.csv')
-	os.system('tail -n 20 static/csv/dht.csv >> static/csv/lastdht.csv')
-
-	past_data = []
-
-	with open('static/csv/lastdht.csv', newline='') as csv_file:
-		reader = csv.reader(csv_file)
-		#next(reader, None)  # Skip the header.
-		# Unpack the row directly in the head of the for loop.
-		for ftemp, humidity, lls, mls, efs, bfs, hs, datestamp in reader:
-			temps = TempHumMeasurements()
-			temps.ftemp = ftemp
-			temps.humidity = humidity
-			temps.time_taken = datestamp[0:5]
-			past_data.append(temps)
-	
-	past_data.reverse()
-	
 	configdata = get_config_from_file()
-	return temps, devices, past_data, configdata
+	return temps, devices, configdata
 
 def take_pic(tempf, humidity):
 	
@@ -87,7 +69,7 @@ def all_off(devices):
 def index():
 
 	imgstamp = time.time()
-	temps, devices, past_data, configdata = page_stuff()
+	temps, devices, configdata = page_stuff()
 
 	action = request.args.get('action')
 
@@ -130,15 +112,15 @@ def index():
 		take_pic(temps.ftemp, temps.humidity)
 
 	messagetext = "Catfish Clem has fallen down on the job. Again. We are sorry for his transgressions."
-	return render_template('index.html', temps = temps, devices = devices, action = action, past_data = past_data, messagetext = messagetext, imgstamp = imgstamp, configdata = configdata)
+	return render_template('index.html', temps = temps, devices = devices, action = action, messagetext = messagetext, imgstamp = imgstamp, configdata = configdata)
 
 
 @app.route('/mobile')
 def mobile():
 
-	temps, devices, past_data = page_stuff()
+	temps, devices = page_stuff()
 
-	return render_template('mobile.html', past_data = past_data, temps = temps)
+	return render_template('mobile.html', temps = temps)
 
 if __name__ == '__main__':
 

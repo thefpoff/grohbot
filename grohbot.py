@@ -199,8 +199,8 @@ def get_temp():
 
     except RuntimeError as error:
         # Errors happen fairly often, DHT's are hard to read, just keep going
-        print(error.args[0])
-        return "ERR", "ERR"
+        print("TRYNUM: " + str(i) + error.args[0])
+        #return "ERR", "ERR"
     
     except Exception as error:
         dhtDevice.exit()
@@ -290,6 +290,10 @@ def save_row_to_csv(data_row):
         with open('static/csv/dht.csv', 'a') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=',', lineterminator='\n')
             csv_writer.writerow(data_row)
+            
+    # create file for graph on webpage
+    os.system('head -n 1 static/csv/dht.csv > static/csv/lastdht.csv')
+    os.system('tail -n 20 static/csv/dht.csv >> static/csv/lastdht.csv')
 
 def save_temps_to_file(ftemp, humidity):
 
