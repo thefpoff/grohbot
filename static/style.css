@@ -19,17 +19,23 @@ img.camshot {
     margin-top: 20px;
 }
 
-.card.col-sm-7.col-sm-12.messagediv {
-    margin-top: 20px;
+
+div.numhandle.ui-slider-handle {
+    width: 1.3em;
+    height: 1.3em;
+    top: 50%;
+    margin-top: -0.6em;
+    text-align: center;
+    line-height: 1.3em;
+    border-radius: 20px;
+    font-size: 32px;
+    outline: none;
 }
 
-.slider-selection {
-	background: yellow;
-}
-.slider-track-low {
-    background: darkgray;
+.slider-row.row {
+    margin-top: 33px;
 }
 
-.slider-track-high {
-    background: darkgrey;
+.ui-slider-range {
+    background: black;
 }

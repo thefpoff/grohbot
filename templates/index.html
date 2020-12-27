@@ -13,10 +13,11 @@
 		<script src="https://d3js.org/d3.v6.min.js"></script>
 		<!-- Chart js --> 
 		<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha256-t9UJPrESBeG2ojKTIcFLPGF7nHi2vEc7f5A2KpH/UBU=" crossorigin="anonymous"></script>
-		<!-- Slider for Bootstrap JS -->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/bootstrap-slider.min.js" integrity="sha512-f0VlzJbcEB6KiW8ZVtL+5HWPDyW1+nJEjguZ5IVnSQkvZbwBt2RfCBY0CBO1PsMAqxxrG4Di6TfsCPP3ZRwKpA==" crossorigin="anonymous"></script>
-		<!-- Slider for Bootstrap CSS -->
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/css/bootstrap-slider.min.css" integrity="sha512-3q8fi8M0VS+X/3n64Ndpp6Bit7oXSiyCnzmlx6IDBLGlY5euFySyJ46RUlqIVs0DPCGOypqP8IRk/EyPvU28mQ==" crossorigin="anonymous" />
+		<!-- jQuery and jQuery UI just for sliders -->
+		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
 
 		<link rel="shortcut icon" href="static/favicon.ico">
 		<link rel="stylesheet" href='{{ url_for('static',    filename='style.css') }}' />
@@ -77,42 +78,35 @@
 						</div>
 						{% endfor %}
 
-
-						<div class="row">
+						<div class="slider-row row">
 							<div class="col-sm-5 col-sm-12">
-								<label for="lightsOnRange" class="form-label">Lights On/Off</label>
+								<label for="slider-lights">Lights Off/On:</label>
+								<div id="slider-lights">
+									<div id="custom-handle-light-off" class="numhandle ui-slider-handle"></div>
+									<div id="custom-handle-light-on" class="numhandle ui-slider-handle"></div>
+								</div>
 							</div>
 						</div>
 
-						<div class="row">
+						<div class="slider-row row">
 							<div class="col-sm-5 col-sm-12">
-								<input id="lightsOnRange" type="text" class="lightsinput" value="" data-slider-min="0" data-slider-max="23" data-slider-step="1" data-slider-value="[{{ configdata.hour_lights_on }},{{ configdata.hour_lights_off }}]"/>
+								<label for="slider-temps">Temps Low/High:</label>
+								<div id="slider-temps">
+									<div id="custom-handle-temp-low" class="numhandle ui-slider-handle"></div>
+									<div id="custom-handle-temp-high" class="numhandle ui-slider-handle"></div>
+								</div>
 							</div>
 						</div>
 
-						<div class="row">	
+						<div class="slider-row row">
 							<div class="col-sm-5 col-sm-12">
-								<label for="tempsRange" class="form-label">Low Temp / High Temp</label>
+								<label for="slider-humid">Humidity (High):</label>
+								<div id="slider-humid">
+									<div id="custom-handle-humid" class="numhandle ui-slider-handle"></div>
+								</div>
 							</div>
 						</div>
 
-						<div class="row">	
-							<div class="col-sm-5 col-sm-12">
-								<input id="tempsRange" type="text" class="tempsinput" value="" data-slider-min="0" data-slider-max="110" data-slider-step="1" data-slider-value="[{{ configdata.low_temp_trigger }},{{ configdata.high_temp_trigger }}]"/>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="col-sm-5 col-sm-12">
-								<label for="humidRange" class="form-label">High Humidity</label>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="col-sm-5 col-sm-12">
-								<input id="humidRange" type="text" class="humidinput" value="" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ configdata.high_humid_trigger }}"/>
-							</div>
-						</div>
 
 				</div>
 			
@@ -140,33 +134,62 @@
 				if (currentPathname != "") {
 					ChangeUrl("GROHBOT LIVE", "http://10.0.0.199:5000/")
 				}
-				
-				var lightsSlider = new Slider('#lightsOnRange', {
-					
-					formatter: function(value) {
-						return 'Current value: ' + value;
-					}
-				});
-				var lightsSliderValue = lightsSlider.getValue();
-				//lightsSlider.setValue(12);
-
-				var tempsSlider = new Slider('#tempsRange', {
-					formatter: function(value) {
-						return 'Current value: ' + value;
-					}
-				});
-
-				var humidSlider = new Slider('#humidRange', {
-					formatter: function(value) {
-						return 'Current value: ' + value;
-					}
-				});
 
 				// get file and set up chart 
 				d3.csv("static/csv/lastdht.csv").then(makeChart);
-			
+
+				setUpSliders();
 			};
 			
+			function setUpSliders() {
+
+				var handleon = $( "#custom-handle-light-on" );
+				var handleoff = $( "#custom-handle-light-off" );
+				$( "#slider-lights" ).slider({
+					range: true,
+					min: 0,
+					max: 23,
+					values: [{{ configdata.hour_lights_off }}, {{ configdata.hour_lights_on }} ],
+					create: function() {
+						handleon.text( $( this ).slider( "values", 1 ) );
+						handleoff.text( $( this ).slider( "values", 0 ) );
+					},
+					slide: function( event, ui ) {
+						handleon.text( ui.values[1] );
+						handleoff.text( ui.values[0] );
+					}
+				});
+				
+				var handlehigh = $( "#custom-handle-temp-high" );
+				var handlelow = $( "#custom-handle-temp-low" );
+				$( "#slider-temps" ).slider({
+					range: true,
+					min: 40,
+					max: 110,
+					values: [{{ configdata.low_temp_trigger }}, {{ configdata.high_temp_trigger }} ],
+					create: function() {
+						handlehigh.text( $( this ).slider( "values", 1 ) );
+						handlelow.text( $( this ).slider( "values", 0 ) );
+					},
+					slide: function( event, ui ) {
+						handlehigh.text( ui.values[1] );
+						handlelow.text( ui.values[0] );
+					}
+				});
+				
+				var handlehumid = $( "#custom-handle-humid" );
+				$( "#slider-humid" ).slider({
+					min: 40,
+					max: 100,
+					value: {{ configdata.high_humid_trigger }},
+					create: function() {
+						handlehumid.text( $( this ).slider( "value") );	
+					},
+					slide: function( event, ui ) {
+						handlehumid.text( ui.value );
+					}
+				});
+			}
 			
 			function makeChart(dhtdata) {
 				
