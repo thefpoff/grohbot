@@ -22,3 +22,14 @@ img.camshot {
 .card.col-sm-7.col-sm-12.messagediv {
     margin-top: 20px;
 }
+
+.slider-selection {
+	background: yellow;
+}
+.slider-track-low {
+    background: darkgray;
+}
+
+.slider-track-high {
+    background: darkgrey;
+}

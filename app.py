@@ -111,7 +111,7 @@ def index():
 	if action == "refresh":
 		take_pic(temps.ftemp, temps.humidity)
 
-	messagetext = "Catfish Clem has fallen down on the job. Again. We are sorry for his transgressions."
+	messagetext = "Catfish Clem has fallen down on the job. Again."
 	return render_template('index.html', temps = temps, devices = devices, action = action, messagetext = messagetext, imgstamp = imgstamp, configdata = configdata)
 
 
