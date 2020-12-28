@@ -49,31 +49,31 @@ ceiling_light_pin = 26
 
 
 lower_light = Device()
-lower_light.name = "Lower Light"
+lower_light.name = "LIGHT(L)"
 lower_light.state = 0 
 lower_light.pin = lower_light_pin
 lower_light.page = "lowerlight"
 
 middle_light = Device()
-middle_light.name = "Middle Light"
+middle_light.name = "LIGHT(M)"
 middle_light.state = 0
 middle_light.pin = middle_light_pin
 middle_light.page = "middlelight"
 
 top_fan = Device()
-top_fan.name = "Exhaust Fan"
+top_fan.name = "EXHAUST"
 top_fan.state = 0 
 top_fan.pin = top_fan_pin
 top_fan.page = "exhaust"
 
 internal_fan = Device()
-internal_fan.name = "Breeze Fan"
+internal_fan.name = "INTAKE"
 internal_fan.state = 0
 internal_fan.pin = internal_fan_pin
 internal_fan.page = "intake"
 
 heater = Device()
-heater.name = "Heater"
+heater.name = "HEATER"
 heater.state = 0
 heater.pin = heater_pin
 heater.page = "heater"
@@ -199,8 +199,8 @@ def get_temp():
 
     except RuntimeError as error:
         # Errors happen fairly often, DHT's are hard to read, just keep going
-        print("TRYNUM: " + str(i) + error.args[0])
-        #return "ERR", "ERR"
+        print(error.args[0])
+        return "ERR", "ERR"
     
     except Exception as error:
         dhtDevice.exit()
@@ -290,7 +290,7 @@ def save_row_to_csv(data_row):
         with open('static/csv/dht.csv', 'a') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=',', lineterminator='\n')
             csv_writer.writerow(data_row)
-            
+
     # create file for graph on webpage
     os.system('head -n 1 static/csv/dht.csv > static/csv/lastdht.csv')
     os.system('tail -n 20 static/csv/dht.csv >> static/csv/lastdht.csv')
@@ -317,7 +317,7 @@ def get_temps_from_file():
 
 def take_pic(tempf, humidity):
     
-    take_pic_command = 'fswebcam -r 640x480 -S 30 -F 10 --quiet --title "GROHBOT LIVE ' + str(tempf) + 'F - ' + str(humidity) + '%h" --top-banner --font "luxisr:15" static/grohbot.jpg'
+    take_pic_command = 'fswebcam -r 640x480 -S 30 -F 10 --quiet --banner-colour "#ffa50096" --line-colour "#ffa500" --title "GROHBOT LIVE ' + str(tempf) + 'F - ' + str(humidity) + '%H" --top-banner --font "luxisr:15" static/grohbot.jpg'
     os.system(take_pic_command)
 
 

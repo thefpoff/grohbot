@@ -60,27 +60,46 @@
 				</div>
 
 				<div class="col-sm-5 controlsdiv">
-
-						{% for name, device in devices.items() %}
-						<div class = "row devicediv" >
-							<div class="devicetext text-end col-sm-2 col-sm-6">
-								{{ device.name }}
-							</div>
-
-							<div class="btncol col-sm-2 col-sm-6">
-
-								{% if device.state == 0 %}
-									<a class="devicebtn btn-sm btn-secondary" href="/?action={{ device.page }}off">OFF</a> <a class="devicebtn btn-sm btn-dark" href="/?action={{ device.page }}on">ON</a>
-								{% else %}
-									<a class="devicebtn btn-sm btn-dark" href="/?action={{ device.page }}off">OFF</a> <a class="devicebtn btn-sm btn-warning" href="/?action={{ device.page }}on">ON</a>
-								{% endif %}
-							</div>
+						<div class="messagerow row"> 
+								<div class="col-sm-5 col-sm-12">
+									<div class="card">
+										<div class="card-body">
+											<div class="card-text">
+												{{ messagetext }}
+											</div>
+										</div>
+									</div>
+								</div>
 						</div>
-						{% endfor %}
+						<div class = "row devicenamesrow" >
+							<div class="devicetext text-end col-sm-1 col-sm-1"></div>	
+							{% for name, device in devices.items() %}
+								<div class="devicetext text-end col-sm-1 col-sm-2">	
+									{{ device.name }}
+								</div>
+							{% endfor %}
+							<div class="devicetext text-end col-sm-1 col-sm-1"></div>
+						</div>
+
+						
+
+						<div class = "row buttonsrow" >
+							<div class="devicetext text-end col-sm-1 col-sm-1"></div>
+							{% for name, device in devices.items() %}
+								<div class="onoffbuttons col-sm-2 col-sm-2">	
+									{% if device.state == 0 %}
+										<a class="btn btn-sm devicebtn stateoffactive" href="/?action={{ device.page }}off">OFF</a> <a class="btn btn-sm devicebtn stateonunactive" href="/?action={{ device.page }}on">ON</a>
+									{% else %}
+										<a class="btn btn-sm devicebtn stateoffunactive" href="/?action={{ device.page }}off">OFF</a> <a class="btn btn-sm devicebtn stateonactive" href="/?action={{ device.page }}on">ON</a>
+									{% endif %}
+								</div>
+							{% endfor %}
+							<div class="devicetext text-end col-sm-1 col-sm-1"></div>
+						</div>
 
 						<div class="slider-row row">
 							<div class="col-sm-5 col-sm-12">
-								<label for="slider-lights">Lights Off/On:</label>
+								<label for="slider-lights" class="sliderlabel">Lights Off/On:</label>
 								<div id="slider-lights">
 									<div id="custom-handle-light-off" class="numhandle ui-slider-handle"></div>
 									<div id="custom-handle-light-on" class="numhandle ui-slider-handle"></div>
@@ -90,7 +109,7 @@
 
 						<div class="slider-row row">
 							<div class="col-sm-5 col-sm-12">
-								<label for="slider-temps">Temps Low/High:</label>
+								<label for="slider-temps" class="sliderlabel">Temps Low/High:</label>
 								<div id="slider-temps">
 									<div id="custom-handle-temp-low" class="numhandle ui-slider-handle"></div>
 									<div id="custom-handle-temp-high" class="numhandle ui-slider-handle"></div>
@@ -100,14 +119,20 @@
 
 						<div class="slider-row row">
 							<div class="col-sm-5 col-sm-12">
-								<label for="slider-humid">Humidity (High):</label>
+								<label for="slider-humid" class="sliderlabel">Humidity (High):</label>
 								<div id="slider-humid">
 									<div id="custom-handle-humid" class="numhandle ui-slider-handle"></div>
 								</div>
 							</div>
 						</div>
-
-
+						<div class="save-config row">
+							<div class="col-sm-9 col-sm-9"></div>
+							<div class="col-sm-1 col-sm-1"></div>
+							<div class="col-sm-2 col-sm-2">
+								<a class="savebtn btn btn-sm btn-secondary" onClick="saveConfig()">Save</a>
+							</div>
+							
+						</div>
 				</div>
 			
 			</div>
@@ -129,18 +154,26 @@
 			window.onload = (event) => {
     			
 				console.log('The page has fully loaded');
+				
+				// get file and set up chart 
+				d3.csv("static/csv/lastdht.csv").then(makeChart);
+
+				setUpSliders();
+
+				clearURL();
+			};
+			
+			function clearURL() {
+
 				// If URL is an action page, reset URL to home so we dont get refresh errors
 				var currentPathname = window.location.pathname;
 				if (currentPathname != "") {
 					ChangeUrl("GROHBOT LIVE", "http://10.0.0.199:5000/")
 				}
 
-				// get file and set up chart 
-				d3.csv("static/csv/lastdht.csv").then(makeChart);
+			}
 
-				setUpSliders();
-			};
-			
+
 			function setUpSliders() {
 
 				var handleon = $( "#custom-handle-light-on" );
@@ -179,6 +212,7 @@
 				
 				var handlehumid = $( "#custom-handle-humid" );
 				$( "#slider-humid" ).slider({
+					range: "min",
 					min: 40,
 					max: 100,
 					value: {{ configdata.high_humid_trigger }},
@@ -190,7 +224,21 @@
 					}
 				});
 			}
-			
+			function saveConfig() {
+				
+				var lightvalues = $( "#slider-lights" ).slider( "values" );
+				var tempsvalues = $( "#slider-temps" ).slider( "values" );
+				var humidvalue = $( "#slider-humid" ).slider( "value" );
+
+				var url = window.location + "?hour_lights_on=" + lightvalues[1] 
+											+ "&hour_lights_off=" + lightvalues[0] 
+											+ "&low_temp_trigger=" + tempsvalues[0] 
+											+ "&high_temp_trigger=" + tempsvalues[1]
+											+ "&high_humid_trigger=" + humidvalue;
+				console.log("SAVING");
+				window.location.replace(url);
+				
+			}
 			function makeChart(dhtdata) {
 				
 				var temps = dhtdata.map(function(d) {

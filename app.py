@@ -34,7 +34,7 @@ def get_config_from_file():
 
     return datao
 
-def page_stuff():
+def get_temps_and_devices():
 
 	# open the file where data is dumped
 	fileo = open('pickles/temphum.pkl', 'rb')
@@ -46,35 +46,21 @@ def page_stuff():
 	devices = pickle.load(fileo)
 	fileo.close()
 	
-	configdata = get_config_from_file()
-	return temps, devices, configdata
+	
+	return temps, devices
 
 def take_pic(tempf, humidity):
 	
-	take_pic_command = 'fswebcam -r 640x480 -S 30 -F 10 --quiet --title "GROHBOT LIVE ' + str(tempf) + 'F - ' + str(humidity) + '%h" --top-banner --font "luxisr:15" static/grohbot.jpg'
+	take_pic_command = 'fswebcam -r 640x480 -S 30 -F 10 --quiet --banner-colour "#ffa50096" --line-colour "#ffa500" --title "GROHBOT LIVE ' + str(tempf) + 'F - ' + str(humidity) + '%H" --top-banner --font "luxisr:15" static/grohbot.jpg'
 	os.system(take_pic_command)
-
-
-def all_off(devices):
-
-	devices["lower_light"].state = 0
-	devices["middle_light"].state = 0
-	devices["top_fan"].state = 0
-	devices["heater"].state = 0
-	devices["internal_fan"].state = 0
-	return devices
 
 
 @app.route('/')
 def index():
 
-	imgstamp = time.time()
-	temps, devices, configdata = page_stuff()
+	temps, devices = get_temps_and_devices()
 
 	action = request.args.get('action')
-
-	if action == "alloff":
-		devices = all_off(devices)
 
 	if action == "lowerlighton":
 		devices["lower_light"].state = 1
@@ -110,8 +96,25 @@ def index():
 
 	if action == "refresh":
 		take_pic(temps.ftemp, temps.humidity)
+	
+	messagetext = "Has anyone seen Catfish Clem?"
 
-	messagetext = "Catfish Clem has fallen down on the job. Again."
+	if request.args.get('hour_lights_on', type=int): 
+		newconfigdata = GrohbotConfig()
+		newconfigdata.hour_lights_on = request.args.get('hour_lights_on', type=int)
+		newconfigdata.hour_lights_off = request.args.get('hour_lights_off', type=int)
+		newconfigdata.low_temp_trigger = request.args.get('low_temp_trigger', type=int)
+		newconfigdata.high_temp_trigger = request.args.get('high_temp_trigger', type=int)
+		newconfigdata.high_humid_trigger = request.args.get('high_humid_trigger', type=int)
+
+		save_config_to_file(newconfigdata)
+
+		messagetext = "saved new config to file"
+
+	imgstamp = time.time()
+	
+	configdata = get_config_from_file()
+
 	return render_template('index.html', temps = temps, devices = devices, action = action, messagetext = messagetext, imgstamp = imgstamp, configdata = configdata)
 
 

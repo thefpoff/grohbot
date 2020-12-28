@@ -8,7 +8,7 @@ img.camshot {
     height: 384px;
 }
 .col-sm-5.controlsdiv {
-    margin-top: 24px;
+    margin-top: 20px;
 }
 
 .btncol.col-sm-2.col-sm-6 {
@@ -18,7 +18,6 @@ img.camshot {
 .col-sm-5.col-sm-12.configdiv {
     margin-top: 20px;
 }
-
 
 div.numhandle.ui-slider-handle {
     width: 1.3em;
@@ -32,10 +31,54 @@ div.numhandle.ui-slider-handle {
     outline: none;
 }
 
-.slider-row.row {
-    margin-top: 33px;
+#slider-lights div.ui-slider-range.ui-corner-all.ui-widget-header {
+    background: black;
 }
 
 .ui-slider-range {
-    background: black;
+    background: green;
+}
+
+.slider-row.row {
+    margin-top: 16px;
+}
+
+a.devicebtn.stateoffunactive {
+    background: gray;
+}
+
+a.devicebtn.stateonactive {
+    background: orange;
+}
+
+a.devicebtn.stateoffactive {
+    background: gray;
+}
+
+a.devicebtn.stateonunactive {
+    background: gray;
+}
+
+.devicetext.text-end.col-sm-1.col-sm-2 {
+    font-size: 13px;
+}
+
+.sliderlabel {
+    margin-bottom: 8px;
+}
+a.btn.btn-sm.devicebtn {
+    margin-bottom: 6px;
+    width: 50px;
+}
+.save-config.row {
+    margin-top: 25;
+}
+a.savebtn.btn.btn-sm.btn-secondary {
+    margin-top: -7px;
+}
+.row.devicenamesrow {
+    margin-top: 8px;
+}
+.messagerow.row {
+    margin-top: -13px;
 }
