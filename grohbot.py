@@ -200,7 +200,8 @@ def get_temp():
     except RuntimeError as error:
         # Errors happen fairly often, DHT's are hard to read, just keep going
         print(error.args[0])
-        return "ERR", "ERR"
+        ftemp, humidity = get_temps_from_file()
+        return ftemp, humidity
     
     except Exception as error:
         dhtDevice.exit()

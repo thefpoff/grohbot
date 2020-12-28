@@ -22,23 +22,7 @@
 		<link rel="shortcut icon" href="static/favicon.ico">
 		<link rel="stylesheet" href='{{ url_for('static',    filename='style.css') }}' />
 		<style>
-			.chart{
-			vertical-align: middle;
-			width: 100%;
-			margin: 0 auto;
-			position: relative;
-			display: inline-block;
-
-			}
-			p {
-			text-align: center;
-			font-family:'Verdana', sans-serif;
-			font-size: 10px;
-			}
-
-			canvas{
-			height: 100%;
-			}
+			
 		</style>
 		
 		<title>GROHBOT LIVE</title>
@@ -51,12 +35,9 @@
 			<div class = "row">
 
 				<div class="col-sm-7 imgdiv">
-
 					<a href="/?action=refresh">
 						<img class="camshot rounded mx-auto d-block" src="static/grohbot.jpg?{{ imgstamp }}"/>
 					</a>
-
-				
 				</div>
 
 				<div class="col-sm-5 controlsdiv">
@@ -149,20 +130,24 @@
 			
 		</div>
 
-	<script>
-			
+		<script>
+
 			window.onload = (event) => {
-    			
-				console.log('The page has fully loaded');
-				
+
+				console.log('Git yer js here');
+
 				// get file and set up chart 
 				d3.csv("static/csv/lastdht.csv").then(makeChart);
-
+				
 				setUpSliders();
-
 				clearURL();
+				autoRefresh();
 			};
-			
+
+			function autoRefresh() {
+				setTimeout(function(){ location.reload(true); }, 600000);
+			}
+
 			function clearURL() {
 
 				// If URL is an action page, reset URL to home so we dont get refresh errors
@@ -192,7 +177,7 @@
 						handleoff.text( ui.values[0] );
 					}
 				});
-				
+
 				var handlehigh = $( "#custom-handle-temp-high" );
 				var handlelow = $( "#custom-handle-temp-low" );
 				$( "#slider-temps" ).slider({
@@ -209,7 +194,7 @@
 						handlelow.text( ui.values[0] );
 					}
 				});
-				
+
 				var handlehumid = $( "#custom-handle-humid" );
 				$( "#slider-humid" ).slider({
 					range: "min",
@@ -224,8 +209,9 @@
 					}
 				});
 			}
+
 			function saveConfig() {
-				
+
 				var lightvalues = $( "#slider-lights" ).slider( "values" );
 				var tempsvalues = $( "#slider-temps" ).slider( "values" );
 				var humidvalue = $( "#slider-humid" ).slider( "value" );
@@ -237,16 +223,16 @@
 											+ "&high_humid_trigger=" + humidvalue;
 				console.log("SAVING");
 				window.location.replace(url);
-				
+
 			}
 			function makeChart(dhtdata) {
-				
+
 				var temps = dhtdata.map(function(d) {
-    				return d.Temp;
-  				});
-  				var humid = dhtdata.map(function(d) {
-    				return d.Humidity;
-  				});
+					return d.Temp;
+				});
+				var humid = dhtdata.map(function(d) {
+					return d.Humidity;
+				});
 				var timelables = dhtdata.map(function(d) {
 					return d.Datetime.substring(0,5);
 				});
@@ -293,8 +279,9 @@
 					data,
 					options
 				});
+				
 			}
-			
+
 			function ChangeUrl(title, url) {
 				if (typeof (history.pushState) != "undefined") {
 					var obj = { Title: title, Url: url };
@@ -303,6 +290,8 @@
 					alert("Browser does not support HTML5.");
 				}
 			}
+
 		</script>
+
 	</body>
 </html>
