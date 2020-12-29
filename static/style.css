@@ -6,6 +6,7 @@ div.container-fluid {
 img.camshot {
     width: 512px;
     height: 384px;
+    margin-top: 8px;
 }
 .col-sm-5.controlsdiv {
     margin-top: 20px;
@@ -96,4 +97,7 @@ p {
 }
 canvas{
 	height: 100%;
+}
+.btn-group.btn-group-sm {
+    margin-top: -7px;
 }

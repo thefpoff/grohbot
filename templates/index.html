@@ -32,9 +32,9 @@
 			<div class = "row">
 
 				<div class="col-sm-7 imgdiv">
-					<a href="/?action=refresh">
+					
 						<img class="camshot rounded mx-auto d-block" src="static/grohbot.jpg?{{ imgstamp }}"/>
-					</a>
+					
 				</div>
 
 				<div class="col-sm-5 controlsdiv">
@@ -104,8 +104,24 @@
 							</div>
 						</div>
 						<div class="save-config row">
-							<div class="col-sm-9 col-sm-9"></div>
-							<div class="col-sm-1 col-sm-1"></div>
+							<div class="col-sm-3 col-sm-3">
+								<a class="savebtn btn btn-sm btn-secondary" onClick="refreshPage()">Refresh</a>
+							</div>
+							<div class="col-sm-6 col-sm-6">
+								<div class="btn-group btn-group-sm" role="group">
+									{% if configdata.mode == "Auto" %}
+										<a href="/?action=Auto" class="btn btn-warning">Auto</a>
+										<a href="/?action=Manual" class="btn btn-secondary">Manual</a>
+									{% else %}
+										<a href="/?action=Auto" class="btn btn-secondary">Auto</a>
+										<a href="/?action=Manual" class="btn btn-warning">Manual</a>
+									{% endif %}
+								  </div>
+							</div>
+						
+							<div class="col-sm-1 col-sm-1">
+								
+							</div>
 							<div class="col-sm-2 col-sm-2">
 								<a class="savebtn btn btn-sm btn-secondary" onClick="saveConfig()">Save</a>
 							</div>
@@ -141,6 +157,9 @@
 				autoRefresh();
 			};
 
+			function refreshPage() {
+				location.reload(true);
+			}
 			function autoRefresh() {
 				setTimeout(function(){ location.reload(true); }, 600000);
 			}

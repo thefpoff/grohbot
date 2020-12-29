@@ -98,6 +98,19 @@ def index():
 		take_pic(temps.ftemp, temps.humidity)
 	
 	messagetext = "Has anyone seen Catfish Clem?"
+	if action == "Auto":
+		# set mode to "Auto"
+		configdata = get_config_from_file()
+		configdata.mode = "Auto"
+		save_config_to_file(configdata)
+		messagetext = "LOGIC MODE ACTIVE"
+
+	if action == "Manual":
+		# set mode to "Manual"
+		configdata = get_config_from_file()
+		configdata.mode = "Manual"
+		save_config_to_file(configdata)
+		messagetext = "MANUAL MODE ACTIVE - logic will NOT run"
 
 	if request.args.get('hour_lights_on', type=int): 
 		newconfigdata = GrohbotConfig()

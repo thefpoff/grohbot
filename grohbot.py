@@ -330,40 +330,45 @@ def set_states_by_logic(ftemp, humidity, devices):
  
     print_lcd_line_0(time.strftime("%m/%d, %H:%M:%S", time.localtime()))
     
-    if localtime.tm_hour >= config.hour_lights_on or localtime.tm_hour < config.hour_lights_off:
+    if config.mode == "Auto":
 
-        print_lcd_line_1("LT: " + str(ftemp) + "f " + str(humidity) + "H")
-        devices["lower_light"].state = 1
-        devices["middle_light"].state = 1
+        # make logic changes we are in "Auto" mode 
+        if localtime.tm_hour >= config.hour_lights_on or localtime.tm_hour < config.hour_lights_off:
 
-    else: 
-        print_lcd_line_1("NT: " + str(ftemp) + "f " + str(humidity) + "H")
-        devices["lower_light"].state = 0
-        devices["middle_light"].state = 0
-    
+            print_lcd_line_1("LT: " + str(ftemp) + "f " + str(humidity) + "H")
+            devices["lower_light"].state = 1
+            devices["middle_light"].state = 1
 
-    if ftemp != "ERR":   
-
-        if ftemp > config.high_temp_trigger:
-            devices["top_fan"].state = 1
-        else:
-            devices["top_fan"].state = 0
-
-        if ftemp < config.low_temp_trigger:
-            devices["heater"].state = 1
-            devices["internal_fan"].state = 1
         else: 
-            devices["heater"].state = 0
-            devices["internal_fan"].state = 0
-            devices["top_fan"].state = 0
+            print_lcd_line_1("NT: " + str(ftemp) + "f " + str(humidity) + "H")
+            devices["lower_light"].state = 0
+            devices["middle_light"].state = 0
+        
 
-    if humidity != "ERR":
+        if ftemp != "ERR":   
 
-        if humidity > config.high_humid_trigger:
-            devices["top_fan"].state = 1
-        else:
-            devices["top_fan"].state = 0
+            if ftemp > config.high_temp_trigger:
+                devices["top_fan"].state = 1
+            else:
+                devices["top_fan"].state = 0
 
+            if ftemp < config.low_temp_trigger:
+                devices["heater"].state = 1
+                devices["internal_fan"].state = 1
+            else: 
+                devices["heater"].state = 0
+                devices["internal_fan"].state = 0
+                devices["top_fan"].state = 0
+
+        if humidity != "ERR":
+
+            if humidity > config.high_humid_trigger:
+                devices["top_fan"].state = 1
+            else:
+                devices["top_fan"].state = 0
+    else:
+        print_lcd_line_1(" MANUAL ENGAGED ")
+        
     return devices
 
 def time_to_run_minutes(devisor):
