@@ -59,76 +59,84 @@ def take_pic(tempf, humidity):
 def index():
 
 	temps, devices = get_temps_and_devices()
+	configdata = get_config_from_file()
 
 	action = request.args.get('action')
 
 	if action == "lowerlighton":
 		devices["lower_light"].state = 1
+		save_device_states_to_file(devices)
 
 	if action == "lowerlightoff":
 		devices["lower_light"].state = 0
+		save_device_states_to_file(devices)
 
 	if action == "middlelighton":
 		devices["middle_light"].state = 1
+		save_device_states_to_file(devices)
 
 	if action == "middlelightoff":
 		devices["middle_light"].state = 0
+		save_device_states_to_file(devices)
 
 	if action == "heateron":
 		devices["heater"].state = 1
+		save_device_states_to_file(devices)
 
 	if action == "heateroff":
 		devices["heater"].state = 0
+		save_device_states_to_file(devices)
 
 	if action == "exhauston":
 		devices["top_fan"].state = 1
+		save_device_states_to_file(devices)
 
 	if action == "exhaustoff":
 		devices["top_fan"].state = 1
+		save_device_states_to_file(devices)
 
 	if action == "intakeon":
 		devices["internal_fan"].state = 1
+		save_device_states_to_file(devices)
 
 	if action == "intakeoff":
 		devices["internal_fan"].state = 0
+		save_device_states_to_file(devices)
 
-	save_device_states_to_file(devices)
 
 	if action == "refresh":
 		take_pic(temps.ftemp, temps.humidity)
 	
-	messagetext = "Has anyone seen Catfish Clem?"
+	
 	if action == "Auto":
 		# set mode to "Auto"
 		configdata = get_config_from_file()
 		configdata.mode = "Auto"
+		configdata.messagetext = "LOGIC MODE ACTIVE"
 		save_config_to_file(configdata)
-		messagetext = "LOGIC MODE ACTIVE"
 
 	if action == "Manual":
 		# set mode to "Manual"
 		configdata = get_config_from_file()
 		configdata.mode = "Manual"
+		configdata.messagetext = "MANUAL MODE ACTIVE - logic will NOT run"
 		save_config_to_file(configdata)
-		messagetext = "MANUAL MODE ACTIVE - logic will NOT run"
 
 	if request.args.get('hour_lights_on', type=int): 
-		newconfigdata = GrohbotConfig()
-		newconfigdata.hour_lights_on = request.args.get('hour_lights_on', type=int)
-		newconfigdata.hour_lights_off = request.args.get('hour_lights_off', type=int)
-		newconfigdata.low_temp_trigger = request.args.get('low_temp_trigger', type=int)
-		newconfigdata.high_temp_trigger = request.args.get('high_temp_trigger', type=int)
-		newconfigdata.high_humid_trigger = request.args.get('high_humid_trigger', type=int)
+		configdata = get_config_from_file()
+		configdata.hour_lights_on = request.args.get('hour_lights_on', type=int)
+		configdata.hour_lights_off = request.args.get('hour_lights_off', type=int)
+		configdata.low_temp_trigger = request.args.get('low_temp_trigger', type=int)
+		configdata.high_temp_trigger = request.args.get('high_temp_trigger', type=int)
+		configdata.high_humid_trigger = request.args.get('high_humid_trigger', type=int)
 
-		save_config_to_file(newconfigdata)
+		save_config_to_file(configdata)
 
-		messagetext = "saved new config to file"
+		configdata.messagetext = "saved new config to file"
 
 	imgstamp = time.time()
-	
-	configdata = get_config_from_file()
 
-	return render_template('index.html', temps = temps, devices = devices, action = action, messagetext = messagetext, imgstamp = imgstamp, configdata = configdata)
+	return render_template('index.html', temps = temps, devices = devices, action = action, imgstamp = imgstamp, configdata = configdata)
 
 
 @app.route('/mobile')

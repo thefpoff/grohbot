@@ -455,6 +455,7 @@ def tick_tock():
         if time_to_run_seconds(grohbotconfig.take_pic_every_seconds):
 
                 #### TAKE PICTURE   #### 
+                ftemp, humidity = get_temp()
                 take_pic(ftemp, humidity)
                 print("TOOK PICTURE")
 
@@ -495,6 +496,10 @@ dhtDevice = adafruit_dht.DHT22(dht22_pin)
 save_config_to_file(grohbotconfig)
 save_device_states_to_file(devices)
 save_temps_to_file(70, 30)
+
+ftemp, humidity = get_temps_from_file()
+devices = set_states_by_logic(ftemp, humidity, devices)
+save_device_states_to_file(devices) 
 
 timer = RepeatedTimer(check_mode_seconds, tick_tock)
 
