@@ -368,7 +368,7 @@ def set_states_by_logic(ftemp, humidity, devices):
                 devices["top_fan"].state = 0
     else:
         print_lcd_line_1(" MANUAL ENGAGED ")
-        
+
     return devices
 
 def time_to_run_minutes(devisor):
@@ -397,6 +397,13 @@ def tick_tock():
     global devices
     global last_run_minute
     global last_run_second
+    global grohbotconfig
+
+    
+	
+	
+	
+	
 
     if last_run_minute != datetime.datetime.now().minute:
 
@@ -404,8 +411,9 @@ def tick_tock():
         #set last_run_minute so we don't run again this minute
         last_run_minute = datetime.datetime.now().minute
 
-        if time_to_run_minutes(5): # Do this every n minutes
+        if time_to_run_minutes(grohbotconfig.run_logic_every_minutes): # Do this every n minutes
 
+            #####     LOGIC    #####
             ftemp, humidity = get_temps_from_file()
             devices = set_states_by_logic(ftemp, humidity, devices)
             save_device_states_to_file(devices) 
@@ -413,8 +421,9 @@ def tick_tock():
             print("RAN LOGIC")
 
 
-        if time_to_run_minutes(10):
+        if time_to_run_minutes(grohbotconfig.write_to_csv_every_minutes):
         
+            ####   WRITE TO CSV ####
             ftemp, humidity = get_temps_from_file()
             save_data_to_csv(ftemp, humidity, devices)
             print("WROTE TO CSV FILE")  
@@ -425,23 +434,27 @@ def tick_tock():
         # set so we don' run again this second 
         last_run_second = datetime.datetime.now().second
 
-        if time_to_run_seconds(5): # Do this every n seconds
+        if time_to_run_seconds(grohbotconfig.set_states_from_pkl_every_seconds): # Do this every n seconds
 
+                ####    SET STATES FROM PKL ####
                 devices = get_device_states_from_file()
                 set_device_state_relays(devices)
-
 
                 print_lcd_line_0(time.strftime("%m/%d, %H:%M:%S", time.localtime()))
                 ftemp, humidity = get_temps_from_file()
                 print_lcd_line_1("NOW:" + str(ftemp) + "F " + str(humidity) + "H")
                 print("SET STATE FROM PKL")
 
-        if time_to_run_seconds(30): 
+        if time_to_run_seconds(grohbotconfig.measure_th_every_seconds): 
 
+                ####     GET TEMP/HUMID READING ####
                 ftemp, humidity = get_temp()
                 save_temps_to_file(ftemp, humidity)
                 print("HT MEASUREMENT: " + str(ftemp) + "F " + str(humidity) + "%H")
+        
+        if time_to_run_seconds(grohbotconfig.take_pic_every_seconds):
 
+                #### TAKE PICTURE   #### 
                 take_pic(ftemp, humidity)
                 print("TOOK PICTURE")
 
