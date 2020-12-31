@@ -22,74 +22,48 @@ from GrohbotConfig import GrohbotConfig
 wiringpi.wiringPiSetup() 
 serial = wiringpi.serialOpen('/dev/ttyS0',9600) 
 
-##############################
-#       PINS        
-
-# working pins
-lower_light_pin = 20
-top_fan_pin = 6
-middle_light_pin = 13
-internal_fan_pin = 5
-heater_pin = 19
-
-dht22_pin = 10
-
-button_one_pin = 3
-button_two_pin = 2
-
-# not working yet pins
-bottom_fan_pin = 21
-top_light_pin = 0
-ceiling_light_pin = 26
-
-
-
-#    END PINS   
-###########################
-
+# set up configuration
+grohbotconfig = GrohbotConfig()
 
 lower_light = Device()
 lower_light.name = "LIGHT(L)"
 lower_light.state = 0 
-lower_light.pin = lower_light_pin
+lower_light.pin = grohbotconfig.lower_light_pin
 lower_light.page = "lowerlight"
 
 middle_light = Device()
 middle_light.name = "LIGHT(M)"
 middle_light.state = 0
-middle_light.pin = middle_light_pin
+middle_light.pin = grohbotconfig.middle_light_pin
 middle_light.page = "middlelight"
 
 top_fan = Device()
 top_fan.name = "EXHAUST"
 top_fan.state = 0 
-top_fan.pin = top_fan_pin
+top_fan.pin = grohbotconfig.top_fan_pin
 top_fan.page = "exhaust"
 
 internal_fan = Device()
 internal_fan.name = "INTAKE"
 internal_fan.state = 0
-internal_fan.pin = internal_fan_pin
+internal_fan.pin = grohbotconfig.internal_fan_pin
 internal_fan.page = "intake"
 
 heater = Device()
 heater.name = "HEATER"
 heater.state = 0
-heater.pin = heater_pin
+heater.pin = grohbotconfig.heater_pin
 heater.page = "heater"
 
 devices = {'lower_light':lower_light, 'middle_light':middle_light,  'top_fan':top_fan,  'internal_fan':internal_fan, 'heater':heater}   
 device_names = ['lower_light', 'middle_light', 'top_fan', 'internal_fan', 'heater']
 device_count = 0
 
-# set up configuration
-grohbotconfig = GrohbotConfig()
-
+# TODO: settings to TRY and prevent errant button presses, does not work for FIRST button press? 
 last_button_press_time = time.time()
-req_sec_between_button_presses = .5
+req_sec_between_button_presses = grohbotconfig.req_sec_between_button_presses
 
-check_mode_seconds = 1
-
+check_mode_seconds = grohbotconfig.req_sec_between_button_presses
 last_run_minute = datetime.datetime.now().minute
 last_run_second = datetime.datetime.now().second
 
@@ -105,7 +79,6 @@ def print_lcd_line_1(text):
     wiringpi.serialPuts(serial, text)
 
     #print("lcd1:" + text)
-
 
 def change_device_state(device):
 
@@ -150,8 +123,6 @@ def accept_button_press(button_press_time):
     else:
         return False 
 
-
-
 def button_callback_one(channel):
 
     global device_count
@@ -167,8 +138,6 @@ def button_callback_one(channel):
         device_state_name = current_device.state_options[device_state]
         print_lcd_line_0(current_device.name)
         print_lcd_line_1(device_state_name)
-
-    
 
 def button_callback_two(channel):
 
@@ -187,7 +156,6 @@ def button_callback_two(channel):
         print_lcd_line_1(device_state_name)
      
     
-
 def get_temp():
 
     try:
@@ -244,7 +212,6 @@ def save_device_states_to_file(devices):
     pickle.dump(devices, file)
     file.close()
 
-
 def get_device_states_from_file():
 
     # open the file where data is dumped
@@ -276,7 +243,6 @@ def save_data_to_csv(ftemp, humidity, devices):
     data_row = [ftemp, humidity, devices["lower_light"].state, devices["middle_light"].state, devices["top_fan"].state, devices["internal_fan"].state, devices["heater"].state, time.strftime('%X %x %Z')]
     save_row_to_csv(data_row)
 
-
 def save_row_to_csv(data_row):
 
     if path.exists("static/csv/dht.csv"):
@@ -295,6 +261,39 @@ def save_row_to_csv(data_row):
     # create file for graph on webpage
     os.system('head -n 1 static/csv/dht.csv > static/csv/lastdht.csv')
     os.system('tail -n 20 static/csv/dht.csv >> static/csv/lastdht.csv')
+
+def check_ht_readings_for_error():
+
+    if path.exists("static/csv/lastdht.csv"):
+        # file exists
+        
+        with open('static/csv/lastdht.csv') as csv_file:
+            csv_reader = csv.DictReader(csv_file, delimiter=',', lineterminator='\n')
+            
+            last_temp = 0
+            problem = False
+            skip_rows = 10
+            skip_rows_counter = 0
+
+            for row in csv_reader:
+                if skip_rows_counter < skip_rows:
+
+                    skip_rows_counter = skip_rows_counter + 1
+
+                    # check this row
+                    this_temp = row["Temp"]
+                    print("Last:" + str(last_temp) + " This:" + str(this_temp))
+                    if this_temp == last_temp:
+    
+                        problem = True
+                    else:
+                        problem = False
+                        last_temp = this_temp
+
+        if problem:
+            print("we have a problem")
+    
+
 
 def save_temps_to_file(ftemp, humidity):
 
@@ -320,7 +319,6 @@ def take_pic(tempf, humidity):
     
     take_pic_command = 'fswebcam -r 640x480 -S 30 -F 10 --quiet --banner-colour "#ffa50096" --line-colour "#ffa500" --title "GROHBOT LIVE ' + str(tempf) + 'F - ' + str(humidity) + '%H" --top-banner --font "luxisr:15" static/grohbot.jpg'
     os.system(take_pic_command)
-
 
 def set_states_by_logic(ftemp, humidity, devices):
 
@@ -399,11 +397,6 @@ def tick_tock():
     global last_run_second
     global grohbotconfig
 
-    
-	
-	
-	
-	
 
     if last_run_minute != datetime.datetime.now().minute:
 
@@ -451,6 +444,7 @@ def tick_tock():
                 ftemp, humidity = get_temp()
                 save_temps_to_file(ftemp, humidity)
                 print("HT MEASUREMENT: " + str(ftemp) + "F " + str(humidity) + "%H")
+                check_ht_readings_for_error()
         
         if time_to_run_seconds(grohbotconfig.take_pic_every_seconds):
 
@@ -465,33 +459,33 @@ def tick_tock():
 #GPIO.setmode(GPIO.BOARD) # Use physical pin numbering
 
 # Set button pins to be an input pin and set initial value to be pulled low (off)
-GPIO.setup(button_one_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) 
-GPIO.setup(button_two_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) 
-GPIO.add_event_detect(button_one_pin, GPIO.RISING,callback=button_callback_one, bouncetime=300)
-GPIO.add_event_detect(button_two_pin, GPIO.RISING,callback=button_callback_two, bouncetime=300) 
+GPIO.setup(grohbotconfig.button_one_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) 
+GPIO.setup(grohbotconfig.button_two_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) 
+GPIO.add_event_detect(grohbotconfig.button_one_pin, GPIO.RISING,callback=button_callback_one, bouncetime=300)
+GPIO.add_event_detect(grohbotconfig.button_two_pin, GPIO.RISING,callback=button_callback_two, bouncetime=300) 
 
 # set up working pins and turn them all off at startup 
-GPIO.setup(lower_light_pin, GPIO.OUT)
-GPIO.output(lower_light_pin, GPIO.HIGH)
-GPIO.setup(middle_light_pin, GPIO.OUT)
-GPIO.output(middle_light_pin, GPIO.HIGH)
-GPIO.setup(top_fan_pin, GPIO.OUT)
-GPIO.output(top_fan_pin, GPIO.HIGH)
-GPIO.setup(internal_fan_pin, GPIO.OUT)
-GPIO.output(internal_fan_pin, GPIO.HIGH)
-GPIO.setup(heater_pin, GPIO.OUT)
-GPIO.output(heater_pin, GPIO.HIGH)
+GPIO.setup(grohbotconfig.lower_light_pin, GPIO.OUT)
+GPIO.output(grohbotconfig.lower_light_pin, GPIO.HIGH)
+GPIO.setup(grohbotconfig.middle_light_pin, GPIO.OUT)
+GPIO.output(grohbotconfig.middle_light_pin, GPIO.HIGH)
+GPIO.setup(grohbotconfig.top_fan_pin, GPIO.OUT)
+GPIO.output(grohbotconfig.top_fan_pin, GPIO.HIGH)
+GPIO.setup(grohbotconfig.internal_fan_pin, GPIO.OUT)
+GPIO.output(grohbotconfig.internal_fan_pin, GPIO.HIGH)
+GPIO.setup(grohbotconfig.heater_pin, GPIO.OUT)
+GPIO.output(grohbotconfig.heater_pin, GPIO.HIGH)
 
 # pins not being used, still turning them off at startup 
-GPIO.setup(bottom_fan_pin, GPIO.OUT)
-GPIO.output(bottom_fan_pin, GPIO.HIGH)
-GPIO.setup(top_light_pin, GPIO.OUT)
-GPIO.output(top_light_pin, GPIO.HIGH)
-GPIO.setup(ceiling_light_pin, GPIO.OUT)
-GPIO.output(ceiling_light_pin, GPIO.HIGH)
+GPIO.setup(grohbotconfig.bottom_fan_pin, GPIO.OUT)
+GPIO.output(grohbotconfig.bottom_fan_pin, GPIO.HIGH)
+GPIO.setup(grohbotconfig.top_light_pin, GPIO.OUT)
+GPIO.output(grohbotconfig.top_light_pin, GPIO.HIGH)
+GPIO.setup(grohbotconfig.ceiling_light_pin, GPIO.OUT)
+GPIO.output(grohbotconfig.ceiling_light_pin, GPIO.HIGH)
 
 # Initial the dht device, with data pin connected to:
-dhtDevice = adafruit_dht.DHT22(dht22_pin)
+dhtDevice = adafruit_dht.DHT22(grohbotconfig.dht22_pin)
 
 save_config_to_file(grohbotconfig)
 save_device_states_to_file(devices)

@@ -4,5 +4,3 @@ static/csv/dht.csv
 static/csv/lastdht.csv
 pickles/grohbotconfig.pkl
 pickles/devices_states.pkl
-.gitignore
-
