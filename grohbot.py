@@ -266,17 +266,17 @@ def check_ht_readings_for_error():
 
     if path.exists("static/csv/lastdht.csv"):
         # file exists
-        
+
         with open('static/csv/lastdht.csv') as csv_file:
             csv_reader = csv.DictReader(csv_file, delimiter=',', lineterminator='\n')
             
             last_temp = 0
             problem = False
-            skip_rows = 10
+            skip_rows = 15
             skip_rows_counter = 0
 
             for row in csv_reader:
-                if skip_rows_counter < skip_rows:
+                if skip_rows_counter > skip_rows:
 
                     skip_rows_counter = skip_rows_counter + 1
 
@@ -289,9 +289,11 @@ def check_ht_readings_for_error():
                     else:
                         problem = False
                         last_temp = this_temp
+                else:
+                    skip_rows_counter = skip_rows_counter + 1
 
         if problem:
-            print("we have a problem")
+            print("*******************************************  TEMP HUMIDITY READING ERROR")
     
 
 
