@@ -55,8 +55,14 @@ heater.state = 0
 heater.pin = grohbotconfig.heater_pin
 heater.page = "heater"
 
-devices = {'lower_light':lower_light, 'middle_light':middle_light,  'top_fan':top_fan,  'internal_fan':internal_fan, 'heater':heater}   
-device_names = ['lower_light', 'middle_light', 'top_fan', 'internal_fan', 'heater']
+dht_relay = Device()
+dht_relay.name = "DHTRESET"
+dht_relay.state = 0
+dht_relay.pin = grohbotconfig.dht_ground_relay_pin
+dht_relay.page = "dhtreset"
+
+devices = {'lower_light':lower_light, 'middle_light':middle_light,  'top_fan':top_fan,  'internal_fan':internal_fan, 'heater':heater, 'dht_reset':dht_relay}   
+device_names = ['lower_light', 'middle_light', 'top_fan', 'internal_fan', 'heater', 'dht_reset']
 device_count = 0
 
 # TODO: settings to TRY and prevent errant button presses, does not work for FIRST button press? 
@@ -158,6 +164,8 @@ def button_callback_two(channel):
     
 def get_temp():
 
+    global devices 
+
     try:
         temperature_c = round(dhtDevice.temperature, 2)
         temperature_f = round(temperature_c * (9 / 5) + 32, 2)
@@ -168,6 +176,16 @@ def get_temp():
     except RuntimeError as error:
         # Errors happen fairly often, DHT's are hard to read, just keep going
         print(error.args[0])
+
+        # reset DHT or remove the ground via relay until next check, if it's off turn it back on 
+        if devices["dht_reset"].state == 0:
+            devices["dht_reset"].state = 1
+            print("TURNED DHT OFF")
+        else:
+            devices["dht_reset"].state = 0
+            print("TURNED DHT ON")
+
+        save_device_states_to_file(devices)
         ftemp, humidity = get_temps_from_file()
         return ftemp, humidity
     
@@ -272,7 +290,7 @@ def check_ht_readings_for_error():
             
             last_temp = 0
             problem = False
-            skip_rows = 15
+            skip_rows = 17
             skip_rows_counter = 0
 
             for row in csv_reader:
@@ -294,8 +312,8 @@ def check_ht_readings_for_error():
 
         if problem:
             print("*******************************************  TEMP HUMIDITY READING ERROR")
+            
     
-
 
 def save_temps_to_file(ftemp, humidity):
 
@@ -477,14 +495,17 @@ GPIO.setup(grohbotconfig.internal_fan_pin, GPIO.OUT)
 GPIO.output(grohbotconfig.internal_fan_pin, GPIO.HIGH)
 GPIO.setup(grohbotconfig.heater_pin, GPIO.OUT)
 GPIO.output(grohbotconfig.heater_pin, GPIO.HIGH)
+GPIO.setup(grohbotconfig.dht_ground_relay_pin, GPIO.OUT)
+GPIO.output(grohbotconfig.dht_ground_relay_pin, GPIO.HIGH)
 
 # pins not being used, still turning them off at startup 
 GPIO.setup(grohbotconfig.bottom_fan_pin, GPIO.OUT)
 GPIO.output(grohbotconfig.bottom_fan_pin, GPIO.HIGH)
 GPIO.setup(grohbotconfig.top_light_pin, GPIO.OUT)
 GPIO.output(grohbotconfig.top_light_pin, GPIO.HIGH)
-GPIO.setup(grohbotconfig.ceiling_light_pin, GPIO.OUT)
-GPIO.output(grohbotconfig.ceiling_light_pin, GPIO.HIGH)
+GPIO.setup(grohbotconfig.not_used_pin, GPIO.OUT)
+GPIO.output(grohbotconfig.not_used_pin, GPIO.HIGH)
+
 
 # Initial the dht device, with data pin connected to:
 dhtDevice = adafruit_dht.DHT22(grohbotconfig.dht22_pin)

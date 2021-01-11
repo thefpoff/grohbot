@@ -24,6 +24,7 @@ class GrohbotConfig():
 	middle_light_pin = 13
 	internal_fan_pin = 5
 	heater_pin = 19
+	dht_ground_relay_pin = 17
 
 	dht22_pin = 10
 
@@ -33,6 +34,7 @@ class GrohbotConfig():
 	# not working yet pins
 	bottom_fan_pin = 21
 	top_light_pin = 0
-	ceiling_light_pin = 26
+	not_used_pin = 26
+	
 
 	
